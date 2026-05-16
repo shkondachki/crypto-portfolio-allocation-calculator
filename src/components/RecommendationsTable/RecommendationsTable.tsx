@@ -34,7 +34,11 @@ export const RecommendationsTable = ({ recommendations }: RecommendationsTablePr
       title="Buy/Sell Recommendations"
       icon="🔄"
     >
-      <Table data={recommendations} columns={columns} />
+      <Table
+        data={recommendations}
+        columns={columns}
+        emptyMessage="No recommendations yet. Add holdings and target allocations first."
+      />
     </Card>
   );
 }; 

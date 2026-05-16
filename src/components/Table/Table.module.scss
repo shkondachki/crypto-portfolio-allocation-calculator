@@ -10,6 +10,8 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: $border-radius;
+  overflow: hidden;
 
   tbody tr:nth-child(odd) {
     background: $tertiary-bg;
@@ -28,5 +30,11 @@
 
   tr:last-child td {
     border-bottom: none;
+  }
+
+  .emptyRow td {
+    color: $text-secondary;
+    font-style: italic;
+    opacity: 0.85;
   }
 } 

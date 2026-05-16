@@ -1,0 +1,82 @@
+@use './variables' as *;
+
+@mixin formGridColumns($minWidth: 250px, $marginBottom: $spacing-sm) {
+  .formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($minWidth, 1fr));
+    gap: $spacing-sm;
+    margin-bottom: $marginBottom;
+  }
+}
+
+@mixin formGridStack {
+  .formGrid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+}
+
+@mixin fieldGroup {
+  .inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .inputLabel {
+    color: $text-secondary;
+    font-size: 0.9rem;
+  }
+
+  .inputGroup {
+    .input {
+      background-color: $primary-bg;
+      border: 1px solid $secondary-bg;
+      border-radius: $border-radius-sm;
+      padding: 20px 16px;
+      color: $text-primary;
+      font-size: 1rem;
+      line-height: 1.45em;
+      transition: border-color $transition-speed;
+      font-family: $font-family;
+
+      &:focus {
+        outline: none;
+        border-color: $accent-color;
+      }
+
+      &::placeholder {
+        color: $text-secondary;
+        opacity: 0.5;
+      }
+
+      &.sm {
+        padding: 14px 16px;
+      }
+    }
+  }
+}
+
+@mixin labelWithTooltip {
+  .labelWithTooltip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+}
+
+@mixin textareaField($minHeight: 120px) {
+  .textarea {
+    resize: vertical;
+    min-height: $minHeight;
+  }
+}
+
+@mixin fieldError {
+  .inputError {
+    border-color: $error-color !important;
+    box-shadow: 0 0 0 1px $error-color;
+  }
+}

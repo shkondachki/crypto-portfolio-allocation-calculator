@@ -1,58 +1,8 @@
 @use '../../styles/variables' as *;
 @use '../../styles/buttons' as *;
+@use '../../styles/form' as form;
 
-
-.formGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: $spacing-sm;
-  margin-bottom: $spacing-sm;
-}
-
-.inputGroup {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-}
-
-.labelWithTooltip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px; /* Adjust based on your existing spacing */
-}
-
-.inputLabel {
-  color: $text-secondary;
-  font-size: 0.9rem;
-}
-
-.inputGroup {
-  .input {
-    background-color: $primary-bg;
-    border: 1px solid $secondary-bg;
-    border-radius: $border-radius-sm;
-    padding: 20px 16px;
-    color: $text-primary;
-    font-size: 1rem;
-    transition: border-color $transition-speed;
-    font-family: $font-family;
-
-    &:focus {
-      outline: none;
-      border-color: $accent-color;
-    }
-
-    &::placeholder {
-      color: $text-secondary;
-      opacity: .5;
-    }
-  }
-}
-
-.inputError {
-  border-color: $error-color !important;
-  box-shadow: 0 0 0 1px $error-color;
-}
-
-
+@include form.formGridColumns;
+@include form.fieldGroup;
+@include form.labelWithTooltip;
+@include form.fieldError;

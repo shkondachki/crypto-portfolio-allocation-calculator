@@ -1,4 +1,4 @@
-import { AddHoldingForm } from './components/AddHoldingForm/AddHoldingForm';
+import { HoldingsInputPanel } from './components/HoldingsInputPanel/HoldingsInputPanel';
 import { HoldingsTable } from './components/HoldingsTable/HoldingsTable';
 import { RecommendationsTable } from './components/RecommendationsTable/RecommendationsTable';
 import { usePortfolio } from './hooks/usePortfolio';
@@ -9,20 +9,27 @@ function App() {
     holdings,
     totalValue,
     addHolding,
+    replaceHoldings,
+    applyTargetPercentages,
     deleteHolding,
     calculateRecommendations
   } = usePortfolio();
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Portfolio Allocation Calculator</h1>
 
       <div className={styles.inner}>
         <div className={styles.form}>
-          <AddHoldingForm onAddHolding={addHolding} />
+          <HoldingsInputPanel
+            onAddHolding={addHolding}
+            onReplaceHoldings={replaceHoldings}
+            onApplyTargets={applyTargetPercentages}
+          />
         </div>
       
         <div className={styles.tables}>
+          <h1 className={styles.title}>Portfolio Allocation Calculator</h1>
+
           <HoldingsTable
             holdings={holdings}
             totalValue={totalValue}

@@ -1,0 +1,42 @@
+@use '../../styles/variables' as *;
+@use '../../styles/buttons' as *;
+@use '../../styles/form' as form;
+
+@include form.formGridStack;
+@include form.fieldGroup;
+@include form.labelWithTooltip;
+@include form.textareaField;
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-block: 10px;
+}
+
+.secondary {
+  background: $secondary-bg;
+  color: $text-primary;
+  border: none;
+  border-radius: $border-radius-sm;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background-color $transition-speed;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: rgba($accent-color, 0.15);
+  }
+}
+
+.success {
+  margin: 0;
+  color: $success-color;
+  font-size: 13px;
+}
+
+.error {
+  margin: 0;
+  color: $error-color;
+  font-size: 13px;
+}

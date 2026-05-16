@@ -80,7 +80,11 @@ export const HoldingsTable = ({ holdings, totalValue, onDeleteHolding }: Holding
           }
           icon="💼"
       >
-      <Table data={holdings} columns={columns} />
+      <Table
+        data={holdings}
+        columns={columns}
+        emptyMessage="No holdings yet. Add manually or import from Kraken."
+      />
     </Card>
   );
 }; 

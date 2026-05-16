@@ -5,6 +5,14 @@ import { storage } from '../utils/storage';
 const PORTFOLIO_CACHE_KEY = 'crypto_portfolio_cache';
 
 export const usePortfolio = () => {
+  const savePortfolio = useCallback((nextHoldings: CryptoHolding[]) => {
+    storage.set(PORTFOLIO_CACHE_KEY, {
+      holdings: nextHoldings,
+      totalValue: nextHoldings.reduce((sum, h) => sum + h.value, 0),
+      lastUpdated: new Date()
+    });
+  }, []);
+
   // Initialize state from cache if available
   const [holdings, setHoldings] = useState<CryptoHolding[]>(() => {
     const cachedState = storage.get<PortfolioState>(PORTFOLIO_CACHE_KEY);
@@ -32,8 +40,8 @@ export const usePortfolio = () => {
         const existing = prev[existingIndex];
 
         const updated: CryptoHolding = {
-          ...existing, // Keep all existing properties
-          value: holding.value ?? existing.value, // Use new value OR keep existing
+          ...existing,
+          value: existing.value + (holding.value || 0),
           targetPercentage: holding.targetPercentage ?? existing.targetPercentage,
           lastUpdated: new Date()
         };
@@ -44,33 +52,73 @@ export const usePortfolio = () => {
       else {
         newHoldings = [...prev, {
           ...holding,
+          name: normalizedIncomingName,
           id: Date.now().toString(),
           lastUpdated: new Date()
         }];
       }
 
-      // Save to cache immediately after state update
-      storage.set(PORTFOLIO_CACHE_KEY, {
-        holdings: newHoldings,
-        totalValue: newHoldings.reduce((sum, h) => sum + h.value, 0),
-        lastUpdated: new Date()
-      });
+      savePortfolio(newHoldings);
       return newHoldings;
     });
-  }, []);
+  }, [savePortfolio]);
+
+  const replaceHoldings = useCallback((nextHoldings: CryptoHolding[]) => {
+    const normalized = nextHoldings.map(holding => ({
+      ...holding,
+      id: holding.id || Date.now().toString(),
+      name: holding.name.trim().toUpperCase(),
+      lastUpdated: new Date()
+    }));
+
+    setHoldings(normalized);
+    savePortfolio(normalized);
+  }, [savePortfolio]);
+
+  const applyTargetPercentages = useCallback((targets: Record<string, number>) => {
+    setHoldings(prev => {
+      const normalizedTargets = Object.entries(targets).reduce<Record<string, number>>((acc, [name, value]) => {
+        acc[name.trim().toUpperCase()] = value;
+        return acc;
+      }, {});
+
+      const updatedHoldings = prev.map(holding => {
+        const normalizedName = holding.name.trim().toUpperCase();
+        if (!(normalizedName in normalizedTargets)) {
+          return holding;
+        }
+
+        return {
+          ...holding,
+          targetPercentage: normalizedTargets[normalizedName],
+          lastUpdated: new Date()
+        };
+      });
+
+      const existingNames = new Set(updatedHoldings.map(holding => holding.name.trim().toUpperCase()));
+      const missingHoldings: CryptoHolding[] = Object.entries(normalizedTargets)
+        .filter(([name]) => !existingNames.has(name))
+        .map(([name, targetPercentage]) => ({
+          id: `${Date.now()}-${name}`,
+          name,
+          value: 0,
+          targetPercentage,
+          lastUpdated: new Date()
+        }));
+
+      const newHoldings = [...updatedHoldings, ...missingHoldings];
+      savePortfolio(newHoldings);
+      return newHoldings;
+    });
+  }, [savePortfolio]);
 
   const deleteHolding = useCallback((id: string) => {
     setHoldings(prev => {
       const newHoldings = prev.filter(holding => holding.id !== id);
-      // Save to cache immediately after state update
-      storage.set(PORTFOLIO_CACHE_KEY, {
-        holdings: newHoldings,
-        totalValue: newHoldings.reduce((sum, h) => sum + h.value, 0),
-        lastUpdated: new Date()
-      });
+      savePortfolio(newHoldings);
       return newHoldings;
     });
-  }, []);
+  }, [savePortfolio]);
 
   const calculateRecommendations = useCallback((): Recommendation[] => {
     return holdings.map(holding => {
@@ -96,6 +144,8 @@ export const usePortfolio = () => {
     holdings,
     totalValue,
     addHolding,
+    replaceHoldings,
+    applyTargetPercentages,
     deleteHolding,
     calculateRecommendations
   };
